@@ -1,0 +1,157 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
+
+    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.quraanali.discoverPlaces"
+        minSdk 25
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'discoverPlaces'
+            keyPassword 'discoverPlaces'
+            storeFile file('discoverPlaces.jks')
+            storePassword 'discoverPlaces'
+        }
+    }
+
+    bundle {
+        language {
+            // This property is set to true by default.
+            // You can specify false to turn off
+            // generating configuration APKs for language resources.
+            enableSplit = false
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+
+    flavorDimensions "default"
+    productFlavors {
+        development {
+            versionNameSuffix "-development"
+
+            buildConfigField("String", "BASE_URL", "\"https://api.unsplash.com/\"")
+            buildConfigField("String", "UNSPLASH_API_AUTH", "\"f1sTQpsh4YWCOHr-TZ8HDyve-fJhiXFecJit4v6Dfpg\"")
+        }
+
+        production {
+            versionNameSuffix "-production"
+
+            buildConfigField("String", "BASE_URL", "\"https://api.unsplash.com/\"")
+            buildConfigField("String", "UNSPLASH_API_AUTH", "\"f1sTQpsh4YWCOHr-TZ8HDyve-fJhiXFecJit4v6Dfpg\"")
+        }
+
+
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+}
+
+kotlin.sourceSets.all {
+    languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+}
+
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "io.mockk:mockk:1.13.3"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    //firebase
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+
+
+    //hilt
+    implementation "com.google.dagger:hilt-android:2.43.2"
+    kapt "com.google.dagger:hilt-compiler:2.43.2"
+
+    // retrofit
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.10"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+
+    //data store
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    //Moshi
+    implementation 'com.github.mazenrashed:MoshiKotlinExtensions:1.0.3'
+
+    //navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+
+    implementation "com.github.hadilq.liveevent:liveevent:1.2.0"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+
+    // Android transformation library providing a variety of image transformations for Glide.
+    implementation 'jp.wasabeef:glide-transformations:4.3.0'
+
+    //Runtime permissions
+    implementation 'com.afollestad.assent:core:3.0.0-RC4'
+
+    // to get current location city name and geocode
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // imageViewer zoom
+    implementation 'com.github.stfalcon-studio:StfalconImageViewer:v1.0.1'
+}

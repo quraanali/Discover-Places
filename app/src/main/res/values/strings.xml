@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Discover Places</string>
+    <string name="mapApiKey" translatable="false">AIzaSyD0OB9M7cSJcl8TCqNPE40omLZrrUApDws</string>
+</resources>
