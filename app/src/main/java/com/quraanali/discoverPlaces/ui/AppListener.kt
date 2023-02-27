@@ -12,4 +12,6 @@ interface AppListener {
     fun initPushNotification()
 
     fun changeLocal(bundle: Bundle?=null)
+    fun showToastMessage(message: String)
+    fun showToastMessage(message: Int)
 }

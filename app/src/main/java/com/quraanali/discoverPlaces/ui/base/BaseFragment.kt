@@ -43,5 +43,13 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    fun showToastMessage(message: String) {
+        listener.showToastMessage(message)
+    }
+
+    fun showToastMessage(message: Int) {
+        listener.showToastMessage(message)
+    }
+
 
 }

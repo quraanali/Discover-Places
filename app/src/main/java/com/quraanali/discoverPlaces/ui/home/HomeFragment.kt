@@ -3,17 +3,12 @@ package com.quraanali.discoverPlaces.ui.home
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.assent.Permission
@@ -54,6 +49,11 @@ class HomeFragment : BaseFragment() {
         lifecycleScope.launch {
             viewModel.uiState.collect {
                 showProgress(it.isLoading)
+
+                if (it.toastMessage != null) {
+                    showToastMessage(it.toastMessage)
+                    viewModel.clearToastMessage()
+                }
 
 
                 if (it.searchImagesResultBottomSheetUiModel != null) {
@@ -104,7 +104,6 @@ class HomeFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     fun getMyLocation() {
-
         binding.mapView.getMapAsync { googleMap ->
             googleMap.setOnMapClickListener {
                 // latitude and longitude
@@ -122,7 +121,7 @@ class HomeFragment : BaseFragment() {
                 // adding marker
                 googleMap.addMarker(marker)
 
-                getCityNameFromLatLng(
+                viewModel.getCityNameFromLatLng(
                     latitude,
                     longitude
                 )
@@ -137,24 +136,24 @@ class HomeFragment : BaseFragment() {
                     val cameraPosition =
                         CameraPosition.Builder().target(
                             LatLng(
-                                task.result?.latitude ?: 31.722284363281922,
-                                task.result?.longitude ?: 35.99713895566469
+                                task.result?.latitude ?: 31.7222,
+                                task.result?.longitude ?: 35.9971
                             )
                         ).zoom(12f).build()
                     googleMap.animateCamera(
                         CameraUpdateFactory.newCameraPosition(cameraPosition)
                     )
 
-                    getCityNameFromLatLng(
-                        task.result?.latitude ?: 31.722284363281922,
-                        task.result?.longitude ?: 35.99713895566469
+                    viewModel.getCityNameFromLatLng(
+                        task.result?.latitude ?: 31.7222,
+                        task.result?.longitude ?: 35.9971
                     )
 
 
                 } else {
                     val cameraPosition =
                         CameraPosition.Builder()
-                            .target(LatLng(31.722284363281922, 35.99713895566469)).zoom(12f)
+                            .target(LatLng(31.7222, 35.9971)).zoom(12f)
                             .build()
                     googleMap.animateCamera(
                         CameraUpdateFactory.newCameraPosition(cameraPosition)
@@ -203,45 +202,4 @@ class HomeFragment : BaseFragment() {
         binding.mapView.onLowMemory()
     }
 
-    private fun getCityNameFromLatLng(lat: Double, lng: Double) {
-        val location = Location("providerNA")
-        location.latitude = lat
-        location.longitude = lng
-
-        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-        var addresses: List<Address>? = null
-
-        try {
-            addresses = geocoder.getFromLocation(
-                location.latitude,
-                location.longitude,
-                1
-            )
-        } catch (e: Exception) {
-            Log.e("", "Error in getting address for the location")
-        }
-
-        if (addresses == null || addresses.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                "No address found for the location",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            val address = addresses[0]
-
-            viewModel.getImageForLocation(address)
-
-            Toast.makeText(
-                requireContext(),
-                address.countryName + " " +
-                        address.adminArea + " " +
-                        address.subAdminArea + " " +
-                        address.locality + " " +
-                        address.featureName + " ",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-    }
 }
